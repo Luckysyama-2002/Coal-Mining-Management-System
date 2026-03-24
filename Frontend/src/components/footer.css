@@ -1,0 +1,23 @@
+.footer {
+  background: #020617;
+  color: #64748b;
+  padding: 40px 5% 20px;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #1e293b;
+  padding-bottom: 30px;
+}
+
+.emergency-num {
+  color: #ef4444; /* Red for alert */
+  font-weight: 900;
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 20px;
+  font-size: 0.8rem;
+}

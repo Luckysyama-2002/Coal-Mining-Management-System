@@ -1,0 +1,377 @@
+/* Inherits root variables from ManagerDashboard.css */
+
+.emp-dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  background: #f1f5f9;
+}
+
+.emp-sidebar {
+  width: 260px;
+  background: #0f172a;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.emp-logo {
+  font-weight: 900;
+  font-size: 1.2rem;
+  padding: 0 30px 40px;
+  color: #f59e0b; /* Amber/Gold theme */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.emp-nav { flex: 1; }
+
+.emp-nav .nav-item {
+  padding: 16px 30px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
+  color: #94a3b8;
+  transition: 0.3s;
+}
+
+.emp-nav .nav-item:hover, .emp-nav .nav-item.active {
+  background: #1e293b;
+  color: #f59e0b;
+}
+
+.emp-logout {
+  margin: 0 30px 30px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.emp-main {
+  flex: 1;
+  padding: 40px 60px;
+}
+
+.emp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 40px;
+}
+
+.emp-header h1 { margin: 0; font-size: 1.8rem; color: #0f172a; }
+.status-badge-green { color: #10b981; font-weight: 700; }
+
+.emp-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+}
+
+.info-card, .shift-status-card, .health-summary {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+.info-card h3 { margin-top: 0; color: #64748b; font-size: 1rem; text-transform: uppercase; }
+.info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
+
+.shift-status-card {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.shift-icon { font-size: 3rem; color: #3b82f6; }
+
+.health-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.fit-status {
+  margin-left: auto;
+  background: #dcfce7;
+  color: #15803d;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+
+.vitals-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.vital-item {
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid #e2e8f0;
+}
+
+.v-label { display: block; font-size: 0.75rem; color: #64748b; margin-bottom: 8px; }
+.v-value { font-size: 1.2rem; font-weight: 800; color: #0f172a; }
+
+.checkup-notice {
+  margin-top: 25px;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  text-align: center;
+}
+
+/* New Health Section Styles */
+.reports-section, .upcoming-section {
+  margin-top: 40px;
+}
+
+.reports-section h3, .upcoming-section h3 {
+  color: #0f172a;
+  margin-bottom: 20px;
+  font-size: 1.4rem;
+}
+
+.table-container {
+  overflow-x: auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+.health-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.health-table th {
+  background: #f1f5f9;
+  padding: 16px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #64748b;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.health-table td {
+  padding: 16px 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.health-table tr:hover {
+  background: #f8fafc;
+}
+
+.status-badge.status-cleared {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.status-badge.status-issue {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.action-btn {
+  padding: 8px 16px;
+  margin-right: 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: 0.2s;
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
+}
+
+.preview-btn {
+  background: #3b82f6;
+  color: white;
+}
+
+.preview-btn:hover {
+  background: #2563eb;
+}
+
+.download-btn {
+  background: #10b981;
+  color: white;
+}
+
+.download-btn:hover {
+  background: #059669;
+}
+
+.upcoming-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.upcoming-card {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  border-left: 4px solid #3b82f6;
+}
+
+.up-icon {
+  font-size: 2rem;
+  color: #3b82f6;
+  margin-bottom: 12px;
+}
+
+.upcoming-card h4 {
+  margin: 0 0 8px 0;
+  color: #0f172a;
+}
+
+.up-date {
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.reschedule-btn {
+  background: #f59e0b;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 12px;
+  font-weight: 600;
+}
+
+.reschedule-btn:hover {
+  background: #d97706;
+}
+
+/* Modal Styles */
+.preview-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.preview-modal {
+  background: white;
+  width: 90vw;
+  max-width: 1000px;
+  height: 90vh;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+
+.modal-header {
+  padding: 20px 30px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #0f172a;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #94a3b8;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.close-btn:hover {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.report-iframe {
+  flex: 1;
+  border: none;
+  border-radius: 0 0 12px 12px;
+}
+
+.modal-actions {
+  padding: 20px 30px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.modal-actions button {
+  padding: 12px 24px;
+  border: none;
+  background: #3b82f6;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.modal-actions button:hover {
+  background: #2563eb;
+}
+
+@media (max-width: 768px) {
+  .preview-modal {
+    width: 95vw;
+    height: 85vh;
+  }
+  
+  .table-container {
+    font-size: 0.9rem;
+  }
+}
