@@ -1,0 +1,114 @@
+.surveyor-container {
+  padding: 30px;
+  background: #f1f5f9;
+  min-height: 100vh;
+  color: #0f172a;
+}
+
+.surveyor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.surveyor-icon-bg {
+  width: 50px; height: 50px;
+  background: #8b5cf6; /* Purple for Geospatial */
+  color: white;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+}
+
+.stability-index {
+  background: white;
+  padding: 10px 20px;
+  border-radius: 30px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  display: flex; align-items: center; gap: 10px;
+  color: #10b981;
+  font-weight: 700;
+}
+
+.surveyor-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+.s-card {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+/* Map Viewport */
+.mock-map {
+  height: 300px;
+  background: #1e293b;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  margin-top: 15px;
+  background-image: radial-gradient(#334155 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.map-overlay-coords {
+  position: absolute;
+  top: 15px; left: 15px;
+  background: rgba(15, 23, 42, 0.8);
+  color: #38bdf8;
+  padding: 8px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.75rem;
+}
+
+.drone-marker {
+  position: absolute;
+  top: 40%; left: 60%;
+  color: #f59e0b;
+  text-align: center;
+}
+
+.drone-icon { font-size: 1.5rem; animation: float 3s infinite ease-in-out; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Volumetric/Stockpile */
+.stock-item {
+  background: #f8fafc;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.stock-header { display: flex; justify-content: space-between; font-size: 0.8rem; color: #64748b; }
+.stock-value { font-size: 1.2rem; font-weight: 800; color: #0f172a; margin: 4px 0; }
+.stock-label { font-size: 0.85rem; color: #8b5cf6; font-weight: 600; }
+
+/* Sensor Table */
+.sensor-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.9rem;
+}
+
+.val-ok { color: #10b981; font-weight: 700; }
+.val-warn { color: #ef4444; font-weight: 700; }
+.sensor-note { font-size: 0.75rem; color: #94a3b8; margin-top: 15px; }
+
+/* Measure Tool */
+.tool-input { margin-bottom: 10px; }
+.tool-input label { display: block; font-size: 0.7rem; color: #64748b; margin-bottom: 4px; }
+.tool-input input { width: 100%; background: #f1f5f9; border: none; padding: 8px; border-radius: 4px; font-size: 0.8rem; }
+.dist-result { margin-top: 15px; padding: 10px; background: #8b5cf6; color: white; border-radius: 6px; text-align: center; }

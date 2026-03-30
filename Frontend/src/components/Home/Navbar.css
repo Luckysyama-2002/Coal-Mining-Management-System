@@ -45,7 +45,7 @@
 }
 
 .login-button {
-  background-color: #3b82f6; /* blue-500 */
+  background-color: #f59e0b; 
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   display: flex;
@@ -59,7 +59,8 @@
 }
 
 .login-button:hover {
-  background-color: #2563eb; /* blue-600 */
+   background: #d97706;
+  transform: translateY(-2px);
 }
 
 .login-text {
@@ -67,8 +68,6 @@
 }
 
 
-
-/* Pulse animation for danger state */
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

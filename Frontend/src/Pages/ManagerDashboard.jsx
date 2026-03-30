@@ -6,12 +6,12 @@ import {
 } from 'react-icons/fi';
 
 // Component Imports
-import Employee from './Employee';
-import PaySlip from './PaySlip';
-import LeaveApproval from './LeaveApproval';
-import SafetyReport from './SafetyReport';
-import AuditReport from './AuditReport';
-import Profile from './Profile';
+import Employee from '../components/Dashboard/ManagerDashboard/Employee';
+import PaySlip from '../components/Dashboard/ManagerDashboard/PaySlip';
+import LeaveApproval from '../components/Dashboard/ManagerDashboard/LeaveApproval';
+import SafetyReport from '../components/Dashboard/ManagerDashboard/SafetyReport';
+import AuditReport from '../components/Dashboard/ManagerDashboard/AuditReport';
+import Profile from '../components/Dashboard/ManagerDashboard/Profile';
 
 // Styling
 import './ManagerDashboard.css';

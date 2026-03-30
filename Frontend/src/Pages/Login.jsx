@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FiLock, FiUser, FiArrowRight, FiShield, FiEye, FiEyeOff } from 'react-icons/fi';
-import ForgotPasswordModal from './ForgotPasswordModal';
+import ForgotPasswordModal from '../components/ForgotPasswordModal';
 import './Login.css';
 
 const Login = () => {

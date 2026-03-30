@@ -1,0 +1,103 @@
+.safety-container {
+  padding: 30px;
+  background: #f8fafc;
+  min-height: 100vh;
+  color: #0f172a;
+}
+
+.safety-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.safety-title { display: flex; gap: 15px; align-items: center; }
+.safety-logo { font-size: 2.5rem; color: #0ea5e9; }
+
+.online-pulse {
+  color: #10b981;
+  font-weight: 700;
+  animation: blink 2s infinite;
+}
+
+@keyframes blink { 50% { opacity: 0.5; } }
+
+.safety-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 25px;
+}
+
+.s-panel {
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+/* Table Styling */
+table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+th { text-align: left; padding: 12px; border-bottom: 2px solid #f1f5f9; color: #64748b; font-size: 0.85rem; }
+td { padding: 15px 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+.badge-ok { background: #dcfce7; color: #15803d; padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 0.8rem; }
+
+/* Alert Cards */
+.alert-card {
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  align-items: center;
+}
+.alert-card.critical { background: #fee2e2; border: 1px solid #ef4444; color: #991b1b; }
+.alert-card.warning { background: #ffedd5; border: 1px solid #f59e0b; color: #9a3412; }
+
+.ack-btn {
+  margin-left: auto;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid currentColor;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.broadcast-btn {
+  width: 100%;
+  padding: 15px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 800;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+/* Gas Grid */
+.gas-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; }
+.gas-sensor {
+  padding: 15px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  text-align: center;
+}
+.gas-sensor.high { border-left: 5px solid #f59e0b; }
+.gas-sensor.safe { border-left: 5px solid #10b981; }
+.gas-sensor label { display: block; font-size: 0.75rem; color: #64748b; }
+.gas-sensor strong { font-size: 1.4rem; color: #0f172a; }
+
+/* Clearance Panel */
+.auth-request {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: #f8fafc;
+  border-radius: 10px;
+  margin-top: 15px;
+}
+.approve { background: #10b981; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; }
+.deny { background: #f1f5f9; color: #64748b; border: none; padding: 8px 15px; border-radius: 6px; margin-right: 10px; cursor: pointer; }

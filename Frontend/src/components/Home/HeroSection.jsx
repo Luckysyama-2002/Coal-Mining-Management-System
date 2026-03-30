@@ -1,19 +1,13 @@
 import React from 'react';
-import Navbar from './components/Navbar';
-import Overview from './components/Overview';
-import VisionMission from './components/VissionMission';
-import Footer from './components/footer';
-import './Home.css';
 import { FiArrowRight, FiShield } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
+import './HeroSection.css';
 
-const Home = () => {
+const HeroSection = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="home-wrapper">
-      <Navbar userRole="Guest" gasLevel={0.00} />
-      
+    <>
       {/* HERO SECTION */}
       <section className="hero-container">
         <div className="hero-overlay"></div>
@@ -36,17 +30,8 @@ const Home = () => {
           </div>
         </div>
       </section>
-
-      {/* SYSTEM OVERVIEW */}
-      <Overview />
-
-      {/* VISION & MISSION */}
-      <VisionMission />
-
-      {/* FOOTER */}
-      <Footer />
-    </div>
+    </>
   );
 };
 
-export default Home;
+export default HeroSection;

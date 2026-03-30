@@ -5,11 +5,13 @@ import {
   FiHeart, FiEye, FiDownload 
 } from 'react-icons/fi';
 import './EmployeeDashboard.css';
+import Calendar from '../components/Dashboard/EmployeeDashboard/Calendar';
 
 const EmployeeDashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('details');
   const [previewReport, setPreviewReport] = useState(null);
+  
 
   // Mock Data for the logged-in employee
   const employeeData = {
@@ -159,14 +161,11 @@ const EmployeeDashboard = () => {
                 <div>
                   <h2>Current Assignment</h2>
                   <p><strong>Role:</strong> {employeeData.role}</p>
-                  <p><strong>Current Shift:</strong> {employeeData.shift}</p>
-                  <p><strong>Reporting To:</strong> {employeeData.supervisor}</p>
+                  <p><strong>Shift A:</strong> 8:00 AM - 4:00 PM</p>
+                  <p><strong>Supervisor:</strong> {employeeData.supervisor}</p>
                 </div>
               </div>
-              <div className="location-card">
-                <FiMapPin />
-                <span>Assigned Workstation: <strong>Level 4 South Wing</strong></span>
-              </div>
+              <Calendar />
             </div>
           )}
 

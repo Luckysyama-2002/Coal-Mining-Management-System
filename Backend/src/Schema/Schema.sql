@@ -79,3 +79,13 @@ ALTER TABLE employee ADD COLUMN reset_expires DATETIME NULL;
 ALTER TABLE employee ADD COLUMN otp_attempts INT DEFAULT 3;
 
 
+-- Create the Roles Table
+CREATE TABLE Roles (
+    role_id INT PRIMARY KEY AUTO_INCREMENT,
+    role_name VARCHAR(50) NOT NULL UNIQUE,
+    dashboard_component VARCHAR(100), -- The React component name
+    access_level INT DEFAULT 1,       -- Higher number = higher priority
+    can_approve_blasting BOOLEAN DEFAULT FALSE,
+    can_view_vitals BOOLEAN DEFAULT FALSE,
+    can_edit_personnel BOOLEAN DEFAULT FALSE
+);
