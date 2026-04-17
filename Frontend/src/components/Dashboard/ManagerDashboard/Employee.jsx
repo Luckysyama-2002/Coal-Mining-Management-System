@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   FiSearch, FiFilter, FiFileText, FiPlus, 
   FiUsers, FiShield, FiAlertCircle 
 } from 'react-icons/fi';
+import api from '../../../api';
 import AddEmployeeModal from './AddEmployeeModal';
 import './Employee.css';
 
@@ -10,6 +11,24 @@ const Employee = ({ employees, onPaySlipClick, onEmployeeAdded }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterShift, setFilterShift] = useState("All");
+  const [summary, setSummary] = useState({
+    totalEmployees: 0,
+    activeEmployees: 0,
+    pendingLeaves: 0,
+    openIncidents: 0
+  });
+
+  useEffect(() => {
+    const fetchSummary = async () => {
+      try {
+        const response = await api.get('/employee/summary');
+        setSummary(response.data.summary);
+      } catch (error) {
+        console.error('Failed to fetch summary:', error);
+      }
+    };
+    fetchSummary();
+  }, []);
 
   const handleAddEmployee = (newEmployee) => {
     if (onEmployeeAdded) {
@@ -34,26 +53,29 @@ const Employee = ({ employees, onPaySlipClick, onEmployeeAdded }) => {
         <div className="stat-card blue">
           <div className="s-icon-bg"><FiUsers /></div>
           <div className="s-info">
-            <span className="s-value">{employees.length}</span>
+            <span className="s-value">{summary.totalEmployees}</span>
             <span className="s-label">Total Staff</span>
           </div>
         </div>
         <div className="stat-card green">
           <div className="s-icon-bg"><FiShield /></div>
           <div className="s-info">
-            <span className="s-value">
-              {employees.filter(e => e.status === 'Active').length}
-            </span>
+            <span className="s-value">{summary.activeEmployees}</span>
             <span className="s-label">Currently Active</span>
           </div>
         </div>
         <div className="stat-card gold">
           <div className="s-icon-bg"><FiAlertCircle /></div>
           <div className="s-info">
-            <span className="s-value">
-              {employees.filter(e => e.status === 'On Leave').length}
-            </span>
-            <span className="s-label">On Leave</span>
+            <span className="s-value">{summary.pendingLeaves}</span>
+            <span className="s-label">Pending Approvals</span>
+          </div>
+        </div>
+        <div className="stat-card red">
+          <div className="s-icon-bg"><FiAlertCircle /></div>
+          <div className="s-info">
+            <span className="s-value">{summary.openIncidents}</span>
+            <span className="s-label">Open Incidents</span>
           </div>
         </div>
       </div>
@@ -119,8 +141,8 @@ const Employee = ({ employees, onPaySlipClick, onEmployeeAdded }) => {
                   <td>{emp.role}</td>
                   <td><span className="shift-tag">Shift {emp.shift}</span></td>
                   <td>
-                    <span className={`status-pill ${emp.status.toLowerCase().replace(/\s+/g, '')}`}>
-                      {emp.status}
+                    <span className={`status-pill ${(emp.status || 'Active').toLowerCase().replace(/\s+/g, '')}`}>
+                      {emp.status || 'Active'}
                     </span>
                   </td>
                   <td className="action-cell">

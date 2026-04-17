@@ -96,8 +96,261 @@
 
 .sev-tag { padding: 4px 12px; border-radius: 6px; font-weight: 800; font-size: 0.7rem; text-transform: uppercase; }
 .sev-tag.critical { background: #fee2e2; color: #991b1b; }
-.sev-tag.high { background: #ffedd5; color: #9a3412; }
-.sev-tag.medium { background: #fef9c3; color: #854d0e; }
+.sev-tag.high { background: #fecaca; color: #9f1239; }
+.sev-tag.medium { background: #fef08a; color: #92400e; }
+.sev-tag.low { background: #dbeafe; color: #0c4a6e; }
+
+.resolved-tag { padding: 4px 12px; border-radius: 6px; font-weight: 800; font-size: 0.7rem; text-transform: uppercase; background: #dcfce7; color: #166534; }
+
+/* Safety Tabs */
+.safety-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #e2e8f0;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  padding: 12px 18px;
+  border: none;
+  background: transparent;
+  border-bottom: 3px solid transparent;
+  font-weight: 600;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.tab-btn:hover {
+  color: #0f172a;
+  background: #f8fafc;
+}
+
+.tab-btn.active {
+  color: #dc2626;
+  border-bottom-color: #dc2626;
+  background: #fef2f2;
+}
+
+/* Summary Cards Grid */
+.summary-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.summary-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  border-left: 4px solid #3b82f6;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.summary-card.alerts { border-left-color: #f97316; }
+.summary-card.incidents { border-left-color: #ef4444; }
+.summary-card.zones { border-left-color: #da4c24; }
+.summary-card.ppe { border-left-color: #f59e0b; }
+
+.card-number {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 5px;
+}
+
+.card-label {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.card-critical {
+  font-size: 0.75rem;
+  color: #dc2626;
+  margin-top: 5px;
+  font-weight: 700;
+}
+
+/* Content Section */
+.content-section {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.content-section h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 20px 0;
+  color: #0f172a;
+  font-size: 1.1rem;
+}
+
+/* Sensor Readings Grid */
+.sensor-readings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.location-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 15px;
+  border-left: 4px solid #3b82f6;
+}
+
+.location-card h4 {
+  margin: 0 0 15px 0;
+  color: #0f172a;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 10px;
+}
+
+.sensor-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 0.85rem;
+}
+
+.sensor-item.status-safe { color: #166534; }
+.sensor-item.status-warning { color: #92400e; }
+.sensor-item.status-danger { color: #991b1b; }
+
+.sensor-name { font-weight: 600; }
+.sensor-val { font-weight: 700; color: #0f172a; }
+
+.status-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.status-badge.safe { background: #dcfce7; color: #166534; }
+.status-badge.warning { background: #fef3c7; color: #92400e; }
+.status-badge.danger { background: #fee2e2; color: #991b1b; }
+
+/* Tables */
+.zones-table-container, .ppe-table-container, .alerts-table-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.zones-table, .ppe-table, .alerts-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.zones-table th, .ppe-table th, .alerts-table th {
+  background: #f8fafc;
+  padding: 12px;
+  text-align: left;
+  font-weight: 700;
+  color: #475569;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.zones-table td, .ppe-table td, .alerts-table td {
+  padding: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.zones-table tr:hover, .ppe-table tr:hover, .alerts-table tr:hover {
+  background: #f8fafc;
+}
+
+.zones-table tr.zone-critical { background: #fef2f2; }
+.zones-table tr.zone-high { background: #fffbeb; }
+
+.ppe-table tr.ppe-full { background: #dcfce7; }
+.ppe-table tr.ppe-partial { background: #fef3c7; }
+.ppe-table tr.ppe-non-compliant { background: #fee2e2; }
+
+.alerts-table tr.alert-active { background: #fee2e2; }
+.alerts-table tr.alert-acknowledged { background: #fef3c7; }
+.alerts-table tr.alert-resolved { background: #dcfce7; }
+
+.risk-badge, .compliance-badge, .severity-badge, .item-badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.risk-badge.low { background: #dbeafe; color: #0c4a6e; }
+.risk-badge.medium { background: #fef3c7; color: #92400e; }
+.risk-badge.high { background: #fecaca; color: #9f1239; }
+.risk-badge.critical { background: #fee2e2; color: #7f1d1d; }
+
+.compliance-badge.full { background: #dcfce7; color: #166534; }
+.compliance-badge.partial { background: #fef3c7; color: #92400e; }
+.compliance-badge.non-compliant { background: #fee2e2; color: #991b1b; }
+
+.item-badge.compliant { background: #dcfce7; color: #166534; }
+.item-badge.expired { background: #fecaca; color: #9f1239; }
+.item-badge.non-compliant { background: #fee2e2; color: #991b1b; }
+
+.severity-badge.warning { background: #fef3c7; color: #92400e; }
+.severity-badge.critical { background: #fee2e2; color: #991b1b; }
+
+.bold { font-weight: 700; }
+.no-data { text-align: center; color: #94a3b8; padding: 30px !important; }
+
+/* Status Tag */
+.status-tag {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.status-tag.reported { background: #fecaca; color: #9f1239; }
+.status-tag.investigating { background: #fef3c7; color: #92400e; }
+.status-tag.resolved { background: #dcfce7; color: #166534; }
+
+/* Action Buttons */
+.action-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background: #dc2626;
+  color: white;
+  font-weight: 700;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.action-btn:hover {
+  background: #b91c1c;
+}
+
+.action-btn.secondary {
+  background: #10b981;
+}
+
 
 /* Footer Stats */
 .safety-compliance-row {
@@ -112,3 +365,6 @@
 }
 
 .comp-item { display: flex; align-items: center; gap: 10px; }
+
+/* PDF Export Message */
+

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import './Calendar.css';
 
-const Calendar = () => {
+const Calendar = ({ shifts = [] }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [activeWeekTab, setActiveWeekTab] = useState('thisWeek');
 
@@ -49,38 +49,26 @@ const Calendar = () => {
     return `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
   };
 
-  // Deterministic shift pattern: Prev week 6xA +1 holiday, This week all B, Next week all C
+  // Get shifts for the week
   const getWeekShifts = (weekStart) => {
-    const shifts = [];
-    const weekNumFromNow = Math.round((weekStart - getThisWeek()) / (7 * 24 * 60 * 60 * 1000));
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
     
-    if (weekNumFromNow === -1) { // Previous week: 6 days A, last day holiday
-      for (let i = 0; i < 6; i++) {
-        const date = new Date(weekStart);
-        date.setDate(weekStart.getDate() + i);
-        shifts.push({ day: date.getDate(), fullDate: date.toLocaleDateString(), type: 'A' });
-      }
-    } else if (weekNumFromNow === 0) { // This week: all work B
-      for (let i = 0; i < 6; i++) {
-        const date = new Date(weekStart);
-        date.setDate(weekStart.getDate() + i);
-        shifts.push({ day: date.getDate(), fullDate: date.toLocaleDateString(), type: 'B' });
-      }
-    } else if (weekNumFromNow === 1) { // Next week: all work C
-      for (let i = 0; i < 6; i++) {
-        const date = new Date(weekStart);
-        date.setDate(weekStart.getDate() + i);
-        shifts.push({ day: date.getDate(), fullDate: date.toLocaleDateString(), type: 'C' });
-      }
-    }
-    
-    return shifts;
+    return shifts.filter(shift => {
+      const shiftDate = new Date(shift.shift_date);
+      return shiftDate >= weekStart && shiftDate <= weekEnd;
+    }).map(shift => ({
+      day: new Date(shift.shift_date).getDate(),
+      fullDate: new Date(shift.shift_date).toLocaleDateString(),
+      type: shift.shift_type,
+      status: shift.status
+    }));
   };
 
   const shiftTimes = {
-    A: '6AM - 2PM (Day)',
-    B: '2PM - 10PM (Afternoon)',
-    C: '10PM - 6AM (Night)'
+    A: '8AM - 4PM',
+    B: '12AM - 8AM',
+    C: '4PM - 12AM'
   };
 
   const weekStart = activeWeekTab === 'prevWeek' ? getPrevWeek() : activeWeekTab === 'thisWeek' ? getThisWeek() : getNextWeek();
@@ -190,7 +178,7 @@ const Calendar = () => {
               {renderWeekDays()}
             </div>
             <div className="shift-times">
-              <small>A: 6AM-2PM | B: 2PM-10PM | C: 10PM-6AM</small>
+              <small>A: 8AM-4PM | B: 12AM-8AM | C: 4PM-12AM</small>
             </div>
           </div>
         </div>

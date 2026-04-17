@@ -67,120 +67,198 @@
 
 import React, { useState } from 'react';
 import { FiMail, FiX, FiCheckCircle, FiPhone, FiUser, FiKey, FiEye, FiEyeOff } from 'react-icons/fi';
+import api from '../api';
 import './ForgotPasswordModal.css';
 
 const ForgotPasswordModal = ({ isOpen, onClose }) => {
-  const [step, setStep] = useState('request'); // 'request' | 'otp' | 'reset' | 'changed'
-  const [method, setMethod] = useState('email'); 
+  const [step, setStep] = useState('request');
+  const [method, setMethod] = useState('email');
   const [employeeId, setEmployeeId] = useState('');
+  const [contactValue, setContactValue] = useState('');
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSendCode = (e) => {
+  const resetForm = () => {
+    setStep('request');
+    setMethod('email');
+    setEmployeeId('');
+    setContactValue('');
+    setOtp('');
+    setNewPassword('');
+    setConfirmPassword('');
+    setShowNewPassword(false);
+    setShowConfirmPassword(false);
+    setErrorMsg('');
+    setSuccessMsg('');
+    setLoading(false);
+  };
+
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
+
+  const handleSendCode = async (e) => {
     e.preventDefault();
-    // Logic: Validate employeeId + (email or phone) with Backend
-    // In real app, you'd send the request to backend here
-    setStep('otp');
+    setErrorMsg('');
+    setSuccessMsg('');
+
+    if (!employeeId.trim()) {
+      setErrorMsg('Employee ID is required.');
+      return;
+    }
+
+    if (!contactValue.trim()) {
+      setErrorMsg(method === 'email' ? 'Email is required.' : 'Mobile number is required.');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const payload = {
+        emp_id: employeeId.trim(),
+        method,
+        ...(method === 'email' ? { email: contactValue.trim() } : { phone: contactValue.trim() })
+      };
+
+      const response = await api.post('/auth/forgot-password', payload);
+      setSuccessMsg(response.data?.message || 'Recovery code sent.');
+      setStep('otp');
+    } catch (error) {
+      setErrorMsg(error.response?.data?.message || 'Unable to send recovery code.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
     setErrorMsg('');
-    setLoading(true);
-    // Mock backend call - replace with real fetch POST /verify-otp
-    console.log('Verifying OTP for', employeeId, method, otp);
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Mock delay
-    if (otp.length === 6) {
-      setStep('reset');
-    } else {
-      setErrorMsg('Invalid OTP. Please try again.');
+    setSuccessMsg('');
+
+    if (!otp.trim()) {
+      setErrorMsg('Please enter the OTP code.');
+      return;
     }
-    setLoading(false);
+
+    setLoading(true);
+
+    try {
+      await api.post('/auth/verify-otp', {
+        emp_id: employeeId.trim(),
+        otp: otp.trim()
+      });
+      setStep('reset');
+    } catch (error) {
+      setErrorMsg(error.response?.data?.message || 'OTP verification failed.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
     setErrorMsg('');
-    setLoading(true);
+    setSuccessMsg('');
 
     if (newPassword.length < 6) {
       setErrorMsg('Password must be at least 6 characters long.');
-      setLoading(false);
       return;
     }
 
     if (newPassword !== confirmPassword) {
       setErrorMsg('Passwords do not match.');
-      setLoading(false);
       return;
     }
 
-    // Mock backend call - replace with real fetch POST /reset-password {employeeId, otp, newPassword, method}
-    console.log('Changing password for', employeeId, { newPassword: newPassword.length, confirmPassword: confirmPassword.length });
-    await new Promise(resolve => setTimeout(resolve, 1500)); // Mock delay
-    setStep('changed');
-    setLoading(false);
+    setLoading(true);
+
+    try {
+      await api.post('/auth/reset-password', {
+        emp_id: employeeId.trim(),
+        otp: otp.trim(),
+        newPassword,
+        confirmPassword
+      });
+      setStep('changed');
+    } catch (error) {
+      setErrorMsg(error.response?.data?.message || 'Unable to reset password.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Reset the form when closing
-  const handleClose = () => {
-    setStep('request');
-    setEmployeeId('');
-    setOtp('');
-    setNewPassword('');
-    setConfirmPassword('');
-    setErrorMsg('');
-    setLoading(false);
-    onClose();
-  };
+  const contactLabel = method === 'email' ? 'Registered Email' : 'Registered Mobile Number';
+  const contactPlaceholder = method === 'email' ? 'name@mine.gov.in' : '+91 98765 43210';
+  const contactType = method === 'email' ? 'email' : 'tel';
 
   return (
     <div className="modal-overlay">
       <div className="modal-content">
         <button className="close-btn" onClick={handleClose}><FiX size={24} /></button>
-        
+
         {step === 'request' && (
           <div className="modal-body">
             <h2>Reset Password</h2>
             <p>Enter your ID and choose a recovery method.</p>
 
+            {errorMsg && <div className="error-msg">{errorMsg}</div>}
+            {successMsg && <div className="error-msg" style={{ backgroundColor: '#e2f5e9', color: '#064e3b', borderColor: '#10b981' }}>{successMsg}</div>}
+
             <form onSubmit={handleSendCode}>
-              {/* Employee ID Field */}
               <div className="input-group">
                 <label>Employee ID</label>
                 <div className="input-wrapper">
                   <FiUser className="input-icon" />
-                  <input 
-                    type="text" 
-                    placeholder="e.g. CM-4092" 
+                  <input
+                    type="text"
+                    placeholder="e.g. CM-4092"
                     value={employeeId}
                     onChange={(e) => setEmployeeId(e.target.value)}
-                    required 
+                    required
                   />
                 </div>
               </div>
 
               <div className="method-toggle">
-                <button 
+                <button
                   type="button"
-                  className={method === 'email' ? 'active' : ''} 
+                  className={method === 'email' ? 'active' : ''}
                   onClick={() => setMethod('email')}
                 >Email</button>
-                <button 
+                <button
                   type="button"
-                  className={method === 'sms' ? 'active' : ''} 
+                  className={method === 'sms' ? 'active' : ''}
                   onClick={() => setMethod('sms')}
                 >Mobile/SMS</button>
               </div>
 
-              <button type="submit" className="reset-submit-btn">Send Code</button>
+              <div className="input-group">
+                <label>{contactLabel}</label>
+                <div className="input-wrapper">
+                  {method === 'email' ? <FiMail className="input-icon" /> : <FiPhone className="input-icon" />}
+                  <input
+                    type={contactType}
+                    placeholder={contactPlaceholder}
+                    value={contactValue}
+                    onChange={(e) => setContactValue(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <button type="submit" disabled={loading} className="reset-submit-btn">
+                {loading ? 'Sending...' : 'Send Recovery Code'}
+              </button>
             </form>
           </div>
         )}
@@ -197,13 +275,13 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                 <label>Enter OTP</label>
                 <div className="input-wrapper">
                   <FiKey className="input-icon" />
-                  <input 
-                    type="text" 
-                    placeholder="XXXXXX" 
+                  <input
+                    type="text"
+                    placeholder="XXXXXX"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     maxLength={6}
-                    required 
+                    required
                   />
                 </div>
               </div>
@@ -214,7 +292,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
             </form>
 
             <p className="resend-text">
-              Didn't receive the code? 
+              Didn't receive the code?
               <button type="button" className="resend-btn" onClick={handleSendCode}>
                 Resend Code
               </button>
@@ -234,16 +312,16 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                 <label>New Password</label>
                 <div className="input-wrapper">
                   <FiKey className="input-icon" />
-                  <input 
-                    type={showNewPassword ? "text" : "password"}
+                  <input
+                    type={showNewPassword ? 'text' : 'password'}
                     placeholder="New secure password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     minLength={6}
-                    required 
+                    required
                   />
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     className="password-toggle"
                     onClick={() => setShowNewPassword(!showNewPassword)}
                   >
@@ -256,16 +334,16 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                 <label>Confirm New Password</label>
                 <div className="input-wrapper">
                   <FiKey className="input-icon" />
-                  <input 
-                    type={showConfirmPassword ? "text" : "password"}
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
                     placeholder="Confirm new password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     minLength={6}
-                    required 
+                    required
                   />
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     className="password-toggle"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
@@ -284,7 +362,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
         {step === 'changed' && (
           <div className="modal-success">
             <FiCheckCircle size={60} className="success-icon" />
-            <h2>Change Password Successfully!</h2>
+            <h2>Password Updated</h2>
             <p>Your password has been updated. You can now login with your new password.</p>
             <button className="reset-submit-btn" onClick={handleClose}>Back to Login</button>
           </div>

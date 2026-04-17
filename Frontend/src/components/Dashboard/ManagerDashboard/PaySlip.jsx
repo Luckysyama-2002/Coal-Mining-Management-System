@@ -1,18 +1,54 @@
-import React, { useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { FiDownload, FiFileText, FiPrinter } from 'react-icons/fi';
+import api from '../../../api';
 import './PaySlip.css';
 
 const PaySlip = ({ employee, onClose }) => {
   const pdfRef = useRef();
+  const [payslip, setPayslip] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Mock Salary Calculation Logic
-  const baseSalary = 45000;
-  const allowance = 5500;
-  const tax = (baseSalary + allowance) * 0.10; // 10% Tax
-  const pf = 1800; // Provident Fund
-  const netSalary = (baseSalary + allowance) - (tax + pf);
+  useEffect(() => {
+    const fetchPayslip = async () => {
+      try {
+        const response = await api.get(`/employee/payslips/${employee.id}`);
+        // Get the latest payslip
+        const latestPayslip = response.data.payslips[0];
+        setPayslip(latestPayslip);
+        setLoading(false);
+      } catch (error) {
+        console.error('Failed to fetch payslip:', error);
+        setLoading(false);
+      }
+    };
+    fetchPayslip();
+  }, [employee.id]);
+
+  // Mock data if no real payslip
+  const mockPayslip = {
+    month: 2,
+    year: 2026,
+    basic_salary: 45000,
+    hra: 9000,
+    conveyance: 1920,
+    medical: 1250,
+    lta: 0,
+    pf_employee: 5400,
+    pf_employer: 5400,
+    gratuity: 1350,
+    esi_employee: 585,
+    esi_employer: 585,
+    professional_tax: 2400,
+    income_tax: 4500,
+    other_deductions: 0,
+    gross_earnings: 56170,
+    total_deductions: 19435,
+    net_pay: 36735
+  };
+
+  const data = payslip || mockPayslip;
 
   const downloadPDF = () => {
     const input = pdfRef.current;
@@ -46,7 +82,7 @@ const PaySlip = ({ employee, onClose }) => {
             </div>
             <div className="payslip-title">
               <h1>PAYSLIP</h1>
-              <span>February 2026</span>
+              <span>{new Date(data.year, data.month - 1).toLocaleString('default', { month: 'long' })} {data.year}</span>
             </div>
           </div>
 
@@ -75,21 +111,39 @@ const PaySlip = ({ employee, onClose }) => {
             <tbody>
               <tr>
                 <td>Basic Salary</td>
-                <td>{baseSalary.toLocaleString()}</td>
-                <td>Income Tax (10%)</td>
-                <td>{tax.toLocaleString()}</td>
+                <td>{data.basic_salary.toLocaleString()}</td>
+                <td>Provident Fund (Employee)</td>
+                <td>{data.pf_employee.toLocaleString()}</td>
               </tr>
               <tr>
-                <td>Mining Allowance</td>
-                <td>{allowance.toLocaleString()}</td>
-                <td>Provident Fund (PF)</td>
-                <td>{pf.toLocaleString()}</td>
+                <td>HRA</td>
+                <td>{data.hra.toLocaleString()}</td>
+                <td>ESI (Employee)</td>
+                <td>{data.esi_employee.toLocaleString()}</td>
+              </tr>
+              <tr>
+                <td>Conveyance Allowance</td>
+                <td>{data.conveyance.toLocaleString()}</td>
+                <td>Professional Tax</td>
+                <td>{data.professional_tax.toLocaleString()}</td>
+              </tr>
+              <tr>
+                <td>Medical Allowance</td>
+                <td>{data.medical.toLocaleString()}</td>
+                <td>Income Tax</td>
+                <td>{data.income_tax.toLocaleString()}</td>
+              </tr>
+              <tr>
+                <td>LTA</td>
+                <td>{data.lta.toLocaleString()}</td>
+                <td>Other Deductions</td>
+                <td>{data.other_deductions.toLocaleString()}</td>
               </tr>
               <tr className="total-row">
                 <td>Gross Earnings</td>
-                <td>{(baseSalary + allowance).toLocaleString()}</td>
+                <td>{data.gross_earnings.toLocaleString()}</td>
                 <td>Total Deductions</td>
-                <td>{(tax + pf).toLocaleString()}</td>
+                <td>{data.total_deductions.toLocaleString()}</td>
               </tr>
             </tbody>
           </table>
@@ -97,7 +151,7 @@ const PaySlip = ({ employee, onClose }) => {
           <div className="net-salary-section">
             <div className="net-box">
               <span>NET SALARY PAYABLE</span>
-              <h2>₹ {netSalary.toLocaleString()}</h2>
+              <h2>₹ {data.net_pay.toLocaleString()}</h2>
             </div>
             <p className="amount-words">Amount in words: Forty-Eight Thousand Seven Hundred Rupees Only</p>
           </div>

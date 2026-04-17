@@ -1,9 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   FiUsers, FiPlus, FiFileText, FiUser, FiCheckCircle,
   FiTrendingUp, FiLogOut, FiShield, FiBarChart2 
 } from 'react-icons/fi';
+import api from '../api';
 
 // Component Imports
 import Employee from '../components/Dashboard/ManagerDashboard/Employee';
@@ -22,21 +23,39 @@ const ManagerDashboard = () => {
   // --- 1. STATE MANAGEMENT ---
   const [activeTab, setActiveTab] = useState('employees');
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-  
-  // Mock Employee Data (In a real app, this would come from an API/Firebase)
-  const [employees, setEmployees] = useState([
-    { id: "CM-4092", name: "Rajesh Kumar", role: "Excavator", shift: "A", status: "Active" },
-    { id: "CM-4095", name: "Amit Singh", role: "Safety Officer", shift: "B", status: "On Leave" },
-    { id: "CM-4102", name: "Suresh Raina", role: "Driller", shift: "A", status: "Active" },
-    { id: "CM-4110", name: "Vikash Yadav", role: "Blaster", shift: "C", status: "Active" },
-  ]);
+  const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
+  // Get manager data from localStorage
   const manager = {
-    name: "Vikram Rathore",
-    id: "MGR-102",
+    id: localStorage.getItem('user_id') || 'CM-0001',
+    name: localStorage.getItem('user_name') || 'Manager',
+    role: localStorage.getItem('user_role') || 'manager',
     zone: "Eastern Coalfields",
     experience: "12 Years"
   };
+
+  // Fetch employees on mount
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const response = await api.get('/employee/employees');
+        setEmployees(response.data.employees.map(emp => ({
+          id: emp.emp_id,
+          name: emp.emp_name,
+          role: emp.role,
+          shift: emp.shift,
+          status: emp.status
+        })));
+        setLoading(false);
+      } catch (err) {
+        setError('Failed to load employees.');
+        setLoading(false);
+      }
+    };
+    fetchEmployees();
+  }, []);
 
   // --- 2. HANDLERS ---
   const handleLogout = () => {
@@ -61,6 +80,14 @@ const ManagerDashboard = () => {
     { id: 'safetyreport', label: 'Safety Hub', icon: <FiShield /> },
     { id: 'profile', label: 'My Profile', icon: <FiUser /> },
   ];
+
+  if (loading) {
+    return <div className="loading">Loading manager dashboard...</div>;
+  }
+
+  if (error) {
+    return <div className="error">{error}</div>;
+  }
 
   return (
     <div className="mgr-container"> 

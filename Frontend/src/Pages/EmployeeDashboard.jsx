@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   FiUser, FiClock, FiActivity, FiLogOut, FiBarChart2, FiMapPin, FiCalendar, 
@@ -6,50 +6,61 @@ import {
 } from 'react-icons/fi';
 import './EmployeeDashboard.css';
 import Calendar from '../components/Dashboard/EmployeeDashboard/Calendar';
+import api from '../api';
 
 const EmployeeDashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('details');
   const [previewReport, setPreviewReport] = useState(null);
-  
+  const [employeeData, setEmployeeData] = useState(null);
+  const [healthData, setHealthData] = useState([]);
+  const [shiftData, setShiftData] = useState([]);
+  const [payslipData, setPayslipData] = useState([]);
+  const [safetyStatus, setSafetyStatus] = useState('green');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Mock Data for the logged-in employee
-  const employeeData = {
-    name: "Rajesh Kumar",
-    id: "CM-4092",
-    role: "Excavator Operator",
-    shift: "A (Morning)",
-    zone: "Sector 7 - Underground",
-    supervisor: "Vikram Rathore (MGR-102)",
-    joinDate: "2023-05-10",
-    contact: "+91 98765 43210",
-    email: "rajesh.kumar@coalmine.com",
-    aadhaar: "1234 5678 9012",
-    pan: "ABCDE1234F",
-    bankAccount: "**** **** 5678",
-    ifsc: "SBI0000123",
-    city: "Dhanbad",
-    state: "Jharkhand",
-    country: "India",
-    pincode: "826001",
-    healthStatus: "Fit for Duty",
-    lastCheckup: "Oct 12, 2025",
-    vitals: {
-      heartRate: "72 bpm",
-      bloodPressure: "120/80",
-      oxygen: "98%",
-      bodyTemp: "36.6°C"
-    },
-    previousCheckups: [
-      { id: 1, date: "2024-10-12", doctor: "Dr. A. Sharma", status: "Cleared", reportUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
-      { id: 2, date: "2024-09-15", doctor: "Dr. R. Patel", status: "Minor Issue - Rest Recommended", reportUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
-      { id: 3, date: "2024-08-20", doctor: "Dr. S. Gupta", status: "Cleared", reportUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" }
-    ],
-    upcomingCheckups: [
-      { id: 1, date: "2024-11-15", type: "Annual Medical Exam", notes: "Full body and fitness certification" },
-      { id: 2, date: "2024-12-10", type: "Pulmonary Function Test", notes: "Dust exposure monitoring" }
-    ]
-  };
+  useEffect(() => {
+    const fetchEmployeeData = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+          navigate('/login');
+          return;
+        }
+
+        const emp_id = localStorage.getItem('user_id');
+
+        // Fetch profile
+        const profileRes = await api.get(`/employee/profile/${emp_id}`);
+        setEmployeeData(profileRes.data.employee);
+
+        // Fetch health
+        const healthRes = await api.get(`/employee/health/${emp_id}`);
+        setHealthData(healthRes.data.checkups);
+
+        // Fetch shifts
+        const shiftRes = await api.get(`/employee/shifts/${emp_id}`);
+        setShiftData(shiftRes.data.shifts);
+
+        // Fetch payslips
+        const payslipRes = await api.get(`/employee/mypayslips/${emp_id}`);
+        setPayslipData(payslipRes.data.payslips);
+
+        // Fetch safety status
+        const safetyRes = await api.get(`/employee/safety-status/${emp_id}`);
+        setSafetyStatus(safetyRes.data.safetyStatus);
+
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching employee data:', err);
+        setError('Failed to load employee data');
+        setLoading(false);
+      }
+    };
+
+    fetchEmployeeData();
+  }, [navigate]);
 
   const handleLogout = () => {
     localStorage.clear();
@@ -69,6 +80,28 @@ const EmployeeDashboard = () => {
     link.click();
     document.body.removeChild(link);
   };
+
+  const handleDownloadPayslip = (payslip) => {
+    // For now, just alert. In real app, generate PDF
+    alert(`Downloading payslip for ${payslip.month}/${payslip.year}`);
+  };
+
+  const getShiftTime = (shift) => {
+    const shifts = {
+      'A': '8:00 AM - 4:00 PM',
+      'B': '12:00 AM - 8:00 AM',
+      'C': '4:00 PM - 12:00 AM'
+    };
+    return shifts[shift] || 'Unknown';
+  };
+
+  if (loading) {
+    return <div className="loading">Loading employee data...</div>;
+  }
+
+  if (error) {
+    return <div className="error">{error}</div>;
+  }
 
   return (
     <div className="emp-dashboard-container">
@@ -99,6 +132,12 @@ const EmployeeDashboard = () => {
           >
             <FiMapPin /> <span>Shift Schedule</span>
           </div>
+          <div 
+            className={`nav-item ${activeTab === 'payslip' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('payslip')}
+          >
+            <FiBarChart2 /> <span>My Payslips</span>
+          </div>
         </nav>
 
         <button className="emp-logout" onClick={handleLogout}>
@@ -110,62 +149,61 @@ const EmployeeDashboard = () => {
       <main className="emp-main">
         <header className="emp-header">
           <div>
-            <h1>Welcome back, {employeeData.name.split(' ')[0]}!</h1>
-            <p>ID: {employeeData.id} | Safety Status: <span className="status-badge-green">Cleared</span></p>
+            <h1>Welcome back, {employeeData ? employeeData.emp_name.split(' ')[0] : 'Employee'}!</h1>
+            <p>ID: {employeeData?.emp_id} | Safety Status: <span className={`status-badge-${safetyStatus}`}>{safetyStatus.toUpperCase()}</span></p>
           </div>
           <div className="last-login">Last Sync: Today, 08:00 AM</div>
         </header>
 
         <section className="emp-dynamic-content">
-          {activeTab === 'details' && (
+          {activeTab === 'details' && employeeData && (
             <div className="emp-card-grid">
               <div className="info-card">
                 <h3>Personal Information</h3>
-                <div className="info-row"><span>Full Name:</span> <strong>{employeeData.name}</strong></div>
-                <div className="info-row"><span>Employee ID:</span> <strong>{employeeData.id}</strong></div>
-                <div className="info-row"><span>Primary Zone:</span> <strong>{employeeData.zone}</strong></div>
-                <div className="info-row"><span>Role:</span> <strong>{employeeData.role}</strong></div>
+                <div className="info-row"><span>Full Name:</span> <strong>{employeeData.emp_name}</strong></div>
+                <div className="info-row"><span>Employee ID:</span> <strong>{employeeData.emp_id}</strong></div>
+                <div className="info-row"><span>Role:</span> <strong>{employeeData.role.replace('_', ' ').toUpperCase()}</strong></div>
                 <div className="info-row"><span>Shift:</span> <strong>{employeeData.shift}</strong></div>
-                <div className="info-row"><span>Supervisor:</span> <strong>{employeeData.supervisor}</strong></div>
-                <div className="info-row"><span>Date of Joining:</span> <strong>{employeeData.joinDate}</strong></div>
+                <div className="info-row"><span>Status:</span> <strong>{employeeData.status}</strong></div>
+                <div className="info-row"><span>Date of Joining:</span> <strong>{employeeData.date_of_joining ? new Date(employeeData.date_of_joining).toLocaleDateString() : 'N/A'}</strong></div>
               </div>
               <div className="info-card">
                 <h3>Contact Information</h3>
-                <div className="info-row"><span>Contact:</span> <strong>{employeeData.contact}</strong></div>
-                <div className="info-row"><span>Email:</span> <strong>{employeeData.email}</strong></div>
-                <div className="info-row"><span>Aadhaar:</span> <strong>{employeeData.aadhaar}</strong></div>
-                <div className="info-row"><span>PAN:</span> <strong>{employeeData.pan}</strong></div>
-                <div className="info-row"><span>Bank Account:</span> <strong>{employeeData.bankAccount}</strong></div>
-                <div className="info-row"><span>IFSC Code:</span> <strong>{employeeData.ifsc}</strong></div>
+                <div className="info-row"><span>Contact:</span> <strong>{employeeData.mobile || 'N/A'}</strong></div>
+                <div className="info-row"><span>Email:</span> <strong>{employeeData.email || 'N/A'}</strong></div>
+                <div className="info-row"><span>Aadhaar:</span> <strong>{employeeData.aadhaar || 'N/A'}</strong></div>
+                <div className="info-row"><span>PAN:</span> <strong>{employeeData.pan || 'N/A'}</strong></div>
+                <div className="info-row"><span>Bank Account:</span> <strong>{employeeData.bank_account ? '**** **** ' + employeeData.bank_account.slice(-4) : 'N/A'}</strong></div>
+                <div className="info-row"><span>IFSC Code:</span> <strong>{employeeData.ifsc_code || 'N/A'}</strong></div>
               </div>
               <div className="info-card">
                 <h3>Address</h3>
-                <div className="info-row"><span>City:</span> <strong>{employeeData.city}</strong></div>
-                <div className="info-row"><span>State:</span> <strong>{employeeData.state}</strong></div>
-                <div className="info-row"><span>Country:</span> <strong>{employeeData.country}</strong></div>
-                <div className="info-row"><span>Pincode:</span> <strong>{employeeData.pincode}</strong></div>
+                <div className="info-row"><span>City:</span> <strong>{employeeData.city || 'N/A'}</strong></div>
+                <div className="info-row"><span>State:</span> <strong>{employeeData.state || 'N/A'}</strong></div>
+                <div className="info-row"><span>Country:</span> <strong>{employeeData.country || 'India'}</strong></div>
+                <div className="info-row"><span>Pincode:</span> <strong>{employeeData.pincode || 'N/A'}</strong></div>
               </div>
               <div className="info-card">
                 <h3>Emergency Contact</h3>
-                <div className="info-row"><span>Contact Name:</span> <strong>Sunita Kumar</strong></div>
-                <div className="info-row"><span>Relationship:</span> <strong>Spouse</strong></div>
-                <div className="info-row"><span>Phone:</span> <strong>+91 98765-43210</strong></div>
+                <div className="info-row"><span>Contact Name:</span> <strong>{employeeData.emergency_contact_name || 'N/A'}</strong></div>
+                <div className="info-row"><span>Relationship:</span> <strong>{employeeData.emergency_contact_relation || 'N/A'}</strong></div>
+                <div className="info-row"><span>Phone:</span> <strong>{employeeData.emergency_contact_phone || 'N/A'}</strong></div>
               </div>
             </div>
           )}
 
-          {activeTab === 'shift' && (
+          {activeTab === 'shift' && employeeData && (
             <div className="shift-view">
               <div className="shift-status-card">
                 <FiCalendar className="shift-icon" />
                 <div>
                   <h2>Current Assignment</h2>
-                  <p><strong>Role:</strong> {employeeData.role}</p>
-                  <p><strong>Shift A:</strong> 8:00 AM - 4:00 PM</p>
-                  <p><strong>Supervisor:</strong> {employeeData.supervisor}</p>
+                  <p><strong>Role:</strong> {employeeData.role.replace('_', ' ').toUpperCase()}</p>
+                  <p><strong>Shift {employeeData.shift}:</strong> {getShiftTime(employeeData.shift)}</p>
+                  <p><strong>Status:</strong> {employeeData.status}</p>
                 </div>
               </div>
-              <Calendar />
+              <Calendar shifts={shiftData} />
             </div>
           )}
 
@@ -174,28 +212,36 @@ const EmployeeDashboard = () => {
               <div className="health-summary">
                 <div className="health-header">
                   <FiActivity /> <h2>Current Health Status</h2>
-                  <span className="fit-status">{employeeData.healthStatus}</span>
+                  <span className="fit-status">Fit for Duty</span>
                 </div>
-                <div className="vitals-grid">
-                  <div className="vital-item">
-                    <span className="v-label">Heart Rate</span>
-                    <span className="v-value">{employeeData.vitals.heartRate}</span>
-                  </div>
-                  <div className="vital-item">
-                    <span className="v-label">Blood Pressure</span>
-                    <span className="v-value">{employeeData.vitals.bloodPressure}</span>
-                  </div>
-                  <div className="vital-item">
-                    <span className="v-label">Oxygen Saturation</span>
-                    <span className="v-value">{employeeData.vitals.oxygen}</span>
-                  </div>
-                  <div className="vital-item">
-                    <span className="v-label">Body Temp</span>
-                    <span className="v-value">{employeeData.vitals.bodyTemp}</span>
-                  </div>
-                </div>
+                {(() => {
+                  const latestCheckup = healthData.find(c => c.status === 'completed');
+                  if (latestCheckup) {
+                    return (
+                      <div className="vitals-grid">
+                        <div className="vital-item">
+                          <span className="v-label">Heart Rate</span>
+                          <span className="v-value">{latestCheckup.heart_rate || 'N/A'}</span>
+                        </div>
+                        <div className="vital-item">
+                          <span className="v-label">Blood Pressure</span>
+                          <span className="v-value">{latestCheckup.blood_pressure || 'N/A'}</span>
+                        </div>
+                        <div className="vital-item">
+                          <span className="v-label">Oxygen Saturation</span>
+                          <span className="v-value">{latestCheckup.oxygen_saturation || 'N/A'}</span>
+                        </div>
+                        <div className="vital-item">
+                          <span className="v-label">Body Temp</span>
+                          <span className="v-value">{latestCheckup.body_temperature || 'N/A'}</span>
+                        </div>
+                      </div>
+                    );
+                  }
+                  return <p>No vitals data available</p>;
+                })()}
                 <div className="checkup-notice">
-                  Last Checkup: {employeeData.lastCheckup}
+                  Last Checkup: {healthData.find(c => c.status === 'completed') ? new Date(healthData.find(c => c.status === 'completed').checkup_date).toLocaleDateString() : 'None'}
                 </div>
               </div>
 
@@ -207,31 +253,41 @@ const EmployeeDashboard = () => {
                     <thead>
                       <tr>
                         <th>Date</th>
+                        <th>Type</th>
                         <th>Doctor</th>
                         <th>Status</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {employeeData.previousCheckups.map((checkup) => (
+                      {healthData.filter(c => c.status === 'completed').length > 0 ? healthData.filter(c => c.status === 'completed').map((checkup) => (
                         <tr key={checkup.id}>
-                          <td>{new Date(checkup.date).toLocaleDateString()}</td>
-                          <td>{checkup.doctor}</td>
+                          <td>{new Date(checkup.checkup_date).toLocaleDateString()}</td>
+                          <td>{checkup.checkup_type}</td>
+                          <td>{checkup.doctor_name || 'N/A'}</td>
                           <td>
-                            <span className={`status-badge ${checkup.status === 'Cleared' ? 'status-cleared' : 'status-issue'}`}>
-                              {checkup.status}
-                            </span>
+                            <span className="status-badge-cleared">Completed</span>
                           </td>
                           <td>
-                            <button className="action-btn" onClick={() => handlePreview(checkup.reportUrl)}>
-                              <FiEye /> Preview
-                            </button>
-                            <button className="action-btn" onClick={() => handleDownload(checkup.reportUrl)}>
-                              <FiDownload /> Download
-                            </button>
+                            {checkup.report_url && (
+                              <>
+                                <button className="action-btn" onClick={() => handlePreview(checkup.report_url)}>
+                                  <FiEye /> Preview
+                                </button>
+                                <button className="action-btn" onClick={() => handleDownload(checkup.report_url)}>
+                                  <FiDownload /> Download
+                                </button>
+                              </>
+                            )}
                           </td>
                         </tr>
-                      ))}
+                      )) : (
+                        <tr>
+                          <td colSpan="5" className="no-data">
+                            No completed health checkups.
+                          </td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -241,17 +297,67 @@ const EmployeeDashboard = () => {
               <div className="upcoming-section">
                 <h3>Upcoming Health Checkups</h3>
                 <div className="upcoming-grid">
-                  {employeeData.upcomingCheckups.map((checkup) => (
+                  {healthData.filter(c => c.status === 'scheduled').length > 0 ? healthData.filter(c => c.status === 'scheduled').map((checkup) => (
                     <div key={checkup.id} className="upcoming-card">
                       <FiCalendar className="up-icon" />
-                      <h4>{checkup.type}</h4>
-                      <p className="up-date">{new Date(checkup.date).toLocaleDateString()}</p>
-                      <p>{checkup.notes}</p>
+                      <h4>{checkup.checkup_type}</h4>
+                      <p className="up-date">{new Date(checkup.checkup_date).toLocaleDateString()}</p>
+                      <p>{checkup.notes || 'No notes'}</p>
                       <button className="reschedule-btn">Reschedule</button>
+                    </div>
+                  )) : (
+                    <div className="no-data">
+                      No upcoming health checkups scheduled.
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'payslip' && (
+            <div className="payslip-view">
+              <h2>My Payslips</h2>
+              {payslipData.length > 0 ? (
+                <div className="payslip-list">
+                  {payslipData.map((payslip) => (
+                    <div key={`${payslip.month}-${payslip.year}`} className="payslip-card">
+                      <div className="payslip-header">
+                        <h3>Payslip for {new Date(payslip.year, payslip.month - 1).toLocaleString('default', { month: 'long', year: 'numeric' })}</h3>
+                        <span className="payslip-date">Generated: {new Date(payslip.generated_date).toLocaleDateString()}</span>
+                      </div>
+                      <div className="payslip-details">
+                        <div className="earnings">
+                          <h4>Earnings</h4>
+                          <div className="detail-row"><span>Basic Salary:</span> ₹{payslip.basic_salary}</div>
+                          <div className="detail-row"><span>HRA:</span> ₹{payslip.hra}</div>
+                          <div className="detail-row"><span>Conveyance:</span> ₹{payslip.conveyance}</div>
+                          <div className="detail-row"><span>Medical:</span> ₹{payslip.medical}</div>
+                          <div className="detail-row"><span>LTA:</span> ₹{payslip.lta}</div>
+                          <div className="detail-row total"><span>Gross Earnings:</span> ₹{payslip.gross_earnings}</div>
+                        </div>
+                        <div className="deductions">
+                          <h4>Deductions</h4>
+                          <div className="detail-row"><span>PF Employee:</span> ₹{payslip.pf_employee}</div>
+                          <div className="detail-row"><span>ESI Employee:</span> ₹{payslip.esi_employee}</div>
+                          <div className="detail-row"><span>Professional Tax:</span> ₹{payslip.professional_tax}</div>
+                          <div className="detail-row"><span>Income Tax:</span> ₹{payslip.income_tax}</div>
+                          <div className="detail-row"><span>Other Deductions:</span> ₹{payslip.other_deductions}</div>
+                          <div className="detail-row total"><span>Total Deductions:</span> ₹{payslip.total_deductions}</div>
+                        </div>
+                      </div>
+                      <div className="net-pay">
+                        <strong>Net Pay: ₹{payslip.net_pay}</strong>
+                      </div>
+                      <button className="download-btn" onClick={() => handleDownloadPayslip(payslip)}>
+                        <FiDownload /> Download PDF
+                      </button>
                     </div>
                   ))}
                 </div>
-              </div>
+              ) : (
+                <p>No payslips available.</p>
+              )}
             </div>
           )}
 

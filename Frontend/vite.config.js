@@ -8,5 +8,10 @@ export default defineConfig({
     alias: {
       'slick-carousel': 'slick-carousel'
     }
-  }
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/test/setup.js',
+  },
 })

@@ -13,6 +13,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
+  position: relative;
 }
 
 .header-text h2 {
@@ -39,6 +40,73 @@
 }
 
 .export-btn:hover { background: #e2e8f0; }
+
+.export-btn.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.export-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.export-message {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  z-index: 10;
+  animation: slideDown 0.3s ease-out;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 200px;
+  max-width: 300px;
+}
+
+.export-message.success {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.export-message.error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.export-message.fade-out {
+  animation: fadeOut 1s ease-out forwards;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-5px) scale(0.98);
+  }
+}
 
 /* Summary Cards */
 .audit-summary-grid {
@@ -149,4 +217,56 @@
   align-items: center;
   justify-content: center;
   font-size: 0.8rem;
+}
+
+/* Audit Tabs */
+.audit-tabs {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tab-btn {
+  padding: 12px 20px;
+  border: none;
+  background: transparent;
+  border-bottom: 2px solid transparent;
+  font-weight: 600;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.tab-btn:hover {
+  color: #0f172a;
+  background: #f8fafc;
+}
+
+.tab-btn.active {
+  color: #0f172a;
+  border-bottom-color: #3b82f6;
+  background: #eff6ff;
+}
+
+/* Severity Pills */
+.severity-pill {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.severity-pill.low { background: #dcfce7; color: #166534; }
+.severity-pill.medium { background: #fef3c7; color: #92400e; }
+.severity-pill.high { background: #fee2e2; color: #991b1b; }
+.severity-pill.critical { background: #7f1d1d; color: #fef2f2; }
+
+/* Additional Summary Card */
+.summary-card .card-icon.purple {
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
 }
