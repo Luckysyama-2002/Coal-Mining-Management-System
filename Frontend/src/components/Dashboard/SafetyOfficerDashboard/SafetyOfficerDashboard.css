@@ -21,6 +21,7 @@
 }
 
 .header-content {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -350,7 +351,7 @@
 }
 
 .action-btn.primary { background: #10b981; color: white; }
-.action-btn.secondary { background: #f1f5f9; color: #475569; }
+.action-btn.secondary { background: #7f1d1d; color: white; }
 .action-btn.small { padding: 6px 12px; font-size: 0.8rem; }
 .action-btn.success { background: #10b981; color: white; }
 .action-btn.warning { background: #f59e0b; color: white; }

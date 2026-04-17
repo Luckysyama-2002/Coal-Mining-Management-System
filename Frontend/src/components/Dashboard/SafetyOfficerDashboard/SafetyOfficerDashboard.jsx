@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   FiShield, FiAlertTriangle, FiUsers, FiTrendingUp,
   FiFileText, FiCheckCircle, FiLogOut, FiBarChart2,
@@ -10,6 +11,7 @@ import Profile from '../ManagerDashboard/Profile';
 import './SafetyOfficerDashboard.css';
 
 const SafetyOfficerDashboard = ({ onClose }) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
   const [incidents, setIncidents] = useState([]);
   const [analytics, setAnalytics] = useState({});
@@ -28,6 +30,14 @@ const SafetyOfficerDashboard = ({ onClose }) => {
     severity: 'medium',
     location: ''
   });
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user_id');
+    localStorage.removeItem('user_name');
+    localStorage.removeItem('user_role');
+    navigate('/login');
+  };
 
   // Fetch all safety data on mount
   useEffect(() => {
@@ -238,9 +248,12 @@ const SafetyOfficerDashboard = ({ onClose }) => {
             <button className="action-btn primary" onClick={() => setShowIncidentForm(true)}>
               <FiPlus /> Report Incident
             </button>
+            <button className="action-btn secondary" onClick={handleLogout}>
+              <FiLogOut /> Logout
+            </button>
             {onClose && (
               <button className="action-btn secondary" onClick={onClose}>
-                <FiLogOut /> Exit
+                <FiX /> Close
               </button>
             )}
           </div>

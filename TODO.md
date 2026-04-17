@@ -1,8 +1,9 @@
-# Task: Extract HeroSection from Home.jsx (Completed)
+# Task: Fix SafetyOfficerDashboard Duplicate Declaration Error
 
 ## Steps:
-- [x] 1. Create Frontend/src/components/Home/HeroSection.jsx
-- [x] 2. Edit Frontend/src/Pages/Home.jsx (add import and replace hero section)
-- [x] 3. Verify and complete
+- [x] Create TODO.md with plan breakdown
+- [x] Edit Frontend/src/Pages/SafetyOfficerDashboard.jsx: Remove duplicate SafetyOfficerDashboard declaration and conflicting export
+- [x] Verify no other syntax errors in the file
+- [x] Test the application (run dev server)\n- [x] Confirm error resolved and page renders correctly
+- [x] attempt_completion
 
-HeroSection has been extracted from Home.jsx to Frontend/src/components/Home/HeroSection.jsx. Home.jsx now imports and uses <HeroSection /> in place of the inline code. Removed unused useNavigate and icons from Home.jsx as they are handled in HeroSection.
