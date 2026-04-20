@@ -330,7 +330,7 @@ const SafetyOfficerDashboard = ({ onClose }) => {
               <div className="summary-card">
                 <FiCheckCircle className="card-icon info" />
                 <div className="card-content">
-                  <h3>{(dashboardSummary.todayMetrics?.ppe_compliance_rate || 0).toFixed(1)}%</h3>
+                  <h3>{(Number(dashboardSummary.todayMetrics?.ppe_compliance_rate) || 0).toFixed(1)}%</h3>
                   <p>PPE Compliance</p>
                 </div>
               </div>
